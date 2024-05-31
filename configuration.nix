@@ -33,9 +33,19 @@
     kernelParams = [ "hid_apple.iso_layout=0" "acpi_backlight=vendor" "acpi_mask_gpe=0x15" ];
   };
 
-  # services.xserver.deviceSection = lib.mkDefault ''
-  #  Option "TearFree" "true"
-  #  '';
+  # Enable common container config files in /etc/containers
+  virtualisation.containers.enable = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -131,6 +141,10 @@
   chromium
   vscode
   git
+  dive # look into docker image layers
+  podman-tui # status of containers in the terminal
+  docker-compose # start group of containers for dev
+  podman-compose # start group of containers for dev
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
